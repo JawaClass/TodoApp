@@ -1,10 +1,11 @@
 from typing import Annotated, Union
-
 from fastapi import APIRouter, Depends, FastAPI
 
-from auth_route import router as router_auth_route
-from auth_model import User
-from auth_service import get_current_active_user
+from backend.routes.auth_route import router as router_auth_route
+from backend.routes.signup_route import router as router_signup_route
+from backend.models.auth_model import User
+from backend.services.auth_service import get_current_active_user
+
 app = FastAPI()
 
 router = APIRouter(prefix="", dependencies=[Depends(get_current_active_user)])
@@ -22,5 +23,6 @@ def read_item(current_user: Annotated[User, Depends(get_current_active_user)],
 
 app.include_router(router)
 app.include_router(router_auth_route)
+app.include_router(router_signup_route)
 
 # fastapi dev app.py --host 0.0.0.0

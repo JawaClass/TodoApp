@@ -26,11 +26,12 @@ class BaseMixin:
 class SqlAlchemyBase(DeclarativeBase, BaseMixin):
 
     def __str__(self) -> str:
+        self_ = self.__dict__ 
         package = self.__class__.__module__
         class_ = self.__class__.__name__
-        attrs = ((k, getattr(self, k)) for k in self.__mapper__.columns.keys())
+        attrs = ((k, self_[k]) for k in self.__mapper__.columns.keys())
         sattrs = ", ".join(f"{key}={value!r}" for key, value in attrs)
-        return f"{package}.{class_}({sattrs})"
+        return f"{package}.{class_}({sattrs})" 
 
     def __repr__(self) -> str:
         return str(self)
@@ -43,11 +44,12 @@ class User(SqlAlchemyBase):
     id: Mapped[int] = mapped_column(primary_key=True) 
 
     # scalars
-    name: Mapped[str] = mapped_column(String(255), unique=True)
+    name: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     hashed_password: Mapped[str] = mapped_column(Text)
     create_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     disabled: Mapped[bool] = mapped_column(SmallInteger, default=False)
+    email_verified: Mapped[bool] = mapped_column(SmallInteger, default=False)
     
     # refs
     # this users todo items created by them
@@ -101,7 +103,7 @@ class TodoItem(SqlAlchemyBase):
     done: Mapped[bool] = mapped_column(SmallInteger)   
 
     # refs
-    ref_creator: Mapped[User] = relationship("User", back_populates="ref_creator")
+    ref_creator: Mapped[User] = relationship("User", back_populates="ref_todo_items")
     ref_channel: Mapped[TodoItemChannel | None] = relationship("TodoItemChannel", back_populates="ref_items")
 
 

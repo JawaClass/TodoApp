@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
-
 import jwt
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -8,7 +7,7 @@ from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
-from auth_model import UserInDB, TokenData, User
+from backend.models.auth_model import UserInDB, TokenData, User
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -44,7 +43,7 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password):
+def hash_password(password: str):
     return pwd_context.hash(password)
 
 
@@ -74,9 +73,14 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
+def decode_access_token(token: str):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    return payload
+
+
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = decode_access_token(token)
         username = payload.get("sub")
         if username is None:
             raise CREDENTIALS_EXCEPTION

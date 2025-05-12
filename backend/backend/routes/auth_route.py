@@ -2,10 +2,9 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from auth_service import authenticate_user, fake_users_db, create_access_token, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES
-from auth_model import Token, User
+from backend.services.auth_service import authenticate_user, fake_users_db, create_access_token, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES
+from backend.models.auth_model import Token, User
 
-# , dependencies=[Depends(get_current_active_user)]
 
 router = APIRouter(prefix="/auth")
 
@@ -15,12 +14,8 @@ async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     
-    print("login_for_access_token")
-
     user = authenticate_user(fake_users_db, form_data.username, form_data.password)
     
-    print("got user by form_data", form_data, "==>", user)
-
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
