@@ -37,6 +37,11 @@ class SqlAlchemyBase(DeclarativeBase, BaseMixin):
         return str(self)
 
 
+class UserRole(enum.Enum):
+    User = "User"
+    Admin = "Admin"
+
+
 class User(SqlAlchemyBase):
     __tablename__ = "user"
 
@@ -44,6 +49,7 @@ class User(SqlAlchemyBase):
     id: Mapped[int] = mapped_column(primary_key=True) 
 
     # scalars
+    role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False, default=UserRole.User)
     name: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     hashed_password: Mapped[str] = mapped_column(Text)
@@ -100,7 +106,7 @@ class TodoItem(SqlAlchemyBase):
     description: Mapped[str] = mapped_column(Text)
     create_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     due_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    done: Mapped[bool] = mapped_column(SmallInteger)   
+    done: Mapped[bool] = mapped_column(SmallInteger, default=False)   
 
     # refs
     ref_creator: Mapped[User] = relationship("User", back_populates="ref_todo_items")

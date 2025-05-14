@@ -1,28 +1,29 @@
 from typing import Annotated, Union
 from fastapi import APIRouter, Depends, FastAPI
 
-from backend.routes.auth_route import router as router_auth_route
-from backend.routes.signup_route import router as router_signup_route
-from backend.models.auth_model import User
 from backend.services.auth_service import get_current_active_user
+from backend.routes import routers
+from backend.models import model
 
 app = FastAPI()
 
-router = APIRouter(prefix="", dependencies=[Depends(get_current_active_user)])
+test_router = APIRouter(prefix="", dependencies=[Depends(get_current_active_user)])
 
-@router.get("/")
+@test_router.get("/")
 def read_root():
     return {"Hello": "World..."}
 
 
-@router.get("/items/{item_id}")
-def read_item(current_user: Annotated[User, Depends(get_current_active_user)],
+@test_router.get("/items/{item_id}")
+def read_item(current_user: Annotated[model.User, Depends(get_current_active_user)],
               item_id: int, q: Union[str, None] = None,):
     return {"item_id": item_id, "q": q}
 
 
-app.include_router(router)
-app.include_router(router_auth_route)
-app.include_router(router_signup_route)
+app.include_router(test_router)
+
+for router in routers:
+    app.include_router(router)
+
 
 # fastapi dev app.py --host 0.0.0.0
