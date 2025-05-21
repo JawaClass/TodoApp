@@ -23,7 +23,13 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-# SqlAlchemyBase.metadata.drop_all(sync_engine)
-SqlAlchemyBase.metadata.create_all(sync_engine)
+if __name__ == "__main__":
+
+    SqlAlchemyBase.metadata.drop_all(sync_engine)
+    SqlAlchemyBase.metadata.create_all(sync_engine)
+    from backend.models.mock import create_mock_data
+
+    with sync_session() as session:
+        create_mock_data(session)
 
  

@@ -1,5 +1,5 @@
 fastapi[standard]==0.115.12
-pyjwt==2.10.0
+pyjwt==2.10.1
 passlib[bcrypt]==1.7.4
 sqlalchemy==2.0.0
 aiosqlite==0.21.0
@@ -9,3 +9,4 @@ google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.2
 faker==37.1.0
 alembic==1.15.2 
+fastapi-sso==0.18.0 

@@ -1,20 +1,8 @@
 from datetime import timedelta
-from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from pathlib import Path
-from jwt import PyJWTError
-from pydantic import BaseModel, EmailStr
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response, status
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from pprint import pprint
-from jwt.exceptions import DecodeError
-
 from backend.email import gmail_client 
-from backend.services import user_service
-from backend.services.auth_service import create_access_token, decode_access_token
-from backend.database import async_session, get_session
-from backend.models import model
+from backend.services.auth_service import create_access_token
 
 
 def send_signup_confirmation_email(email: str, base_url: str):

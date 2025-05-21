@@ -5,20 +5,16 @@ from sqlalchemy import (
     UniqueConstraint,
     DateTime,
     Text,
-    String,
-    VARCHAR,
-    Date,
+    String, 
     func,
 )
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column
-from sqlalchemy import Table
+from sqlalchemy.orm import relationship 
 from sqlalchemy import ForeignKey
-import enum
 from datetime import datetime
 from sqlalchemy.orm import DeclarativeBase
+import enum
 
 class BaseMixin:
     pass
@@ -42,6 +38,11 @@ class UserRole(enum.Enum):
     Admin = "Admin"
 
 
+class AuthProvider(enum.Enum):
+    Local = "Local"
+    Google = "Google"
+
+
 class User(SqlAlchemyBase):
     __tablename__ = "user"
 
@@ -49,13 +50,15 @@ class User(SqlAlchemyBase):
     id: Mapped[int] = mapped_column(primary_key=True) 
 
     # scalars
+    auth_provider: Mapped[AuthProvider] = mapped_column(Enum(AuthProvider), default=AuthProvider.Local)
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False, default=UserRole.User)
-    name: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
+    name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     email: Mapped[str] = mapped_column(String(255), unique=True)
     hashed_password: Mapped[str] = mapped_column(Text)
     create_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     disabled: Mapped[bool] = mapped_column(SmallInteger, default=False)
     email_verified: Mapped[bool] = mapped_column(SmallInteger, default=False)
+    comment: Mapped[str] = mapped_column(Text(), nullable=True)
     
     # refs
     # this users todo items created by them

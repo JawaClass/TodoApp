@@ -1,9 +1,8 @@
-from . import auth_route, signup_route, todo_item, user_route
+from . import authentication
+from . import api
 
 
 routers = [
-    auth_route.router,
-    signup_route.router,
-    todo_item.router,
-    user_route.router
+    authentication.router,
+    api.router
 ]
