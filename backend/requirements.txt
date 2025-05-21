@@ -10,3 +10,4 @@ google-auth-oauthlib==1.2.2
 faker==37.1.0
 alembic==1.15.2 
 fastapi-sso==0.18.0 
+ruff==0.11.10

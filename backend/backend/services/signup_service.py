@@ -1,13 +1,14 @@
 from datetime import timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from backend.email import gmail_client 
+from backend.email import gmail_client
 from backend.services.auth_service import create_access_token
 
 
 def send_signup_confirmation_email(email: str, base_url: str):
-    
-    text, html = create_confirmation_email_content(email, base_url, token_expire_minutes=30)
+    text, html = create_confirmation_email_content(
+        email, base_url, token_expire_minutes=30
+    )
 
     # Create a multipart message to support both plain text and HTML
     message = MIMEMultipart("alternative")
@@ -15,11 +16,11 @@ def send_signup_confirmation_email(email: str, base_url: str):
     # Add plain text part (for email clients that don't support HTML)
     text_part = MIMEText(text, "plain")
     message.attach(text_part)
-    
+
     # Add HTML part (for email clients that support HTML)
     html_part = MIMEText(html, "html")
     message.attach(html_part)
-    
+
     message["To"] = email
     message["From"] = "apptodo204@gmail.com"
     message["Subject"] = "Confirm email"
@@ -27,20 +28,26 @@ def send_signup_confirmation_email(email: str, base_url: str):
     gmail_client.send_email(message)
 
 
-def create_confirmation_email_content(email: str, base_url: str, token_expire_minutes=30):
+def create_confirmation_email_content(
+    email: str, base_url: str, token_expire_minutes=30
+):
     access_token_expires = timedelta(minutes=token_expire_minutes)
     confirm_email_token = create_access_token(
         data={"sub": email}, expires_delta=access_token_expires
-    ) 
-    content = fmt_signup_confirmation_email_content(base_url, email, confirm_email_token)
+    )
+    content = fmt_signup_confirmation_email_content(
+        base_url, email, confirm_email_token
+    )
     return content
- 
 
-def fmt_signup_confirmation_email_content(base_url: str, email: str, confirm_token: str): 
+
+def fmt_signup_confirmation_email_content(
+    base_url: str, email: str, confirm_token: str
+):
     base_url = base_url[:-1] if base_url.endswith("/") else base_url
     link = f"{base_url}/signup/confirm-email?token={confirm_token}"
 
-      # Return the email content in HTML format
+    # Return the email content in HTML format
     html = f"""
     <html>
     <body>
@@ -62,6 +69,5 @@ def fmt_signup_confirmation_email_content(base_url: str, email: str, confirm_tok
 your signup is almost complete. Please click this link to confirm your Account.
     {link}
 """
-    
+
     return text, html
-    

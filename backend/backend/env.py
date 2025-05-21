@@ -6,5 +6,7 @@ module_path = pathlib.Path(__file__).resolve().parent
 
 env_file = module_path / ".env"
 
-environment = Config(env_file) 
- 
+if not env_file.exists():
+    raise FileNotFoundError(f"Config .env not found at location: {env_file}")
+
+environment = Config(env_file)

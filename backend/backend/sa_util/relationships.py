@@ -1,4 +1,4 @@
-from typing import Any, Callable, get_args, get_origin, get_type_hints
+from typing import Any, Callable, get_args, get_type_hints
 import sqlalchemy as sa
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
@@ -15,7 +15,9 @@ def select_relationships_deep(
     """
     print(f"select_relationships_deep... {sa_class=} {mask_class=}")
     assert issubclass(sa_class, DeclarativeBase)
-    assert issubclass(mask_class, BaseModel), f"mask_class {mask_class=} :: {type(mask_class)} is not subclass of pydantic.BaseModel"
+    assert issubclass(mask_class, BaseModel), (
+        f"mask_class {mask_class=} :: {type(mask_class)} is not subclass of pydantic.BaseModel"
+    )
 
     mask_struct: dict[str, FieldInfo] = mask_class.model_fields
 
@@ -26,7 +28,7 @@ def select_relationships_deep(
     field_types = get_type_hints(mask_class)
 
     for k in mask_struct:
-        if not k in relationships:
+        if k not in relationships:
             continue
 
         query = sa_load_method(getattr(sa_class, k))
@@ -45,17 +47,14 @@ def select_relationships_deep(
         loads.append(query)
 
     return loads
- 
+
 
 def resolve_type(type_: type[Any]):
-
     def most_inner_arg(tp):
         args = get_args(tp)
         if not args:
             return tp
         first_ = [a for a in args if a is not type(None)][0]
         return most_inner_arg(first_)
-    
-    return most_inner_arg(type_)
 
-  
+    return most_inner_arg(type_)

@@ -4,10 +4,11 @@ from pydantic import BaseModel, EmailStr, Field
 
 from backend.models import model
 
+
 class TodoItemIn(BaseModel):
     channel_id: int | None = None
     name: str
-    description: str 
+    description: str
 
 
 class TodoItemUpdate(TodoItemIn):
@@ -21,20 +22,21 @@ class TodoItemOut(TodoItemIn):
     id: int
     creator_id: int
     create_date: datetime
-    due_date: datetime 
+    due_date: datetime
     done: bool
 
 
-class TodoItemOut_Detailed(TodoItemOut): 
+class TodoItemOut_Detailed(TodoItemOut):
     ref_creator: UserOut
     ref_channel: TodoItemChannelOut | None = None
     xxxx: str | None = Field(default=None)
-    inner_str : list[str] = []
-    inner_inner_str : list[list[str]] = []
+    inner_str: list[str] = []
+    inner_inner_str: list[list[str]] = []
 
 
 class TodoItemDelete(BaseModel):
     id: int
+
 
 class TodoItemChannelOut(BaseModel):
     id: int
@@ -43,13 +45,14 @@ class TodoItemChannelOut(BaseModel):
     description: str
     create_date: datetime
 
-class UserIn(BaseModel): 
+
+class UserIn(BaseModel):
     name: str | None = None
     email: EmailStr
     password: str
 
 
-class UserOut(BaseModel): 
+class UserOut(BaseModel):
     id: int
     name: str | None = None
     email: EmailStr
@@ -66,15 +69,17 @@ class UserEdit(BaseModel):
 
 
 class UserEdit_ByAdmin(BaseModel):
-    # password: str   
+    # password: str
     role: model.UserRole | None = None
     disabled: bool | None = None
     email_verified: bool | None = None
 
-class UserIn_ByAdmin(UserIn): 
+
+class UserIn_ByAdmin(UserIn):
     role: model.UserRole | None = None
     disabled: bool | None = None
     email_verified: bool | None = None
+
 
 class UserSignupRequest(BaseModel):
     email: EmailStr
