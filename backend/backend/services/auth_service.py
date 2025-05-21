@@ -8,11 +8,12 @@ from backend.models import model
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.database import get_session
 import jwt
+from backend.env import environment
 
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-ALGORITHM = "HS256"
+SECRET_KEY = environment("AUTH_SECRET_KEY")
+ALGORITHM = environment("AUTH_SECRET_KEY_ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 CREDENTIALS_EXCEPTION = HTTPException(
